@@ -37,12 +37,14 @@
     "gulp-sass": "^4.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-svg-sprite": "^1.5.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-uglify-es": "^2.0.0",
     "node-w3c-validator": "^2.0.1",
     "stylelint": "^13.9.0",
     "stylelint-declaration-block-no-ignored-properties": "^2.3.0",
     "stylelint-order": "^4.1.0",
-    "stylelint-scss": "^3.18.0"
+    "stylelint-scss": "^3.18.0",
+    "typescript": "^4.3.5"
   },
   "dependencies": {
     "fs": "0.0.1-security",

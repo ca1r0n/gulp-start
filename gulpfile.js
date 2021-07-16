@@ -18,11 +18,33 @@ const notify = require('gulp-notify');
 const image = require('gulp-image');
 const { readFileSync } = require('fs');
 const concat = require('gulp-concat');
+const ts = require('gulp-typescript');
 
 let isProd = false; // dev by default
 
 const clean = () => {
 	return del(['app/*'])
+}
+
+// TypeScript
+const gulpTS = require('gulp-typescript');
+
+const scriptsTS = () => {
+  src('./src/js/vendor/**.js')
+    .pipe(concat('vendor.js'))
+    .pipe(gulpif(isProd, uglify().on("error", notify.onError())))
+    .pipe(dest('./app/js/'))
+  return src(
+    ['./src/js/functions/**.ts', './src/js/components/**.ts', './src/js/main.ts'])
+    .pipe(gulpif(!isProd, sourcemaps.init()))
+    .pipe(gulpTS({
+      noImplicitAny: true,
+      outFile: 'main.js'
+    }))
+    .pipe(dest('./app/js'))
+    .pipe(gulpif(isProd, uglify().on("error", notify.onError())))
+    .pipe(gulpif(!isProd, sourcemaps.write('.')))
+    .pipe(browserSync.stream());
 }
 
 //svg sprite
@@ -124,7 +146,7 @@ const watchFiles = () => {
   });
 
   watch('./src/scss/**/*.scss', styles);
-  watch('./src/js/**/*.js', scripts);
+  watch('./src/js/**/*.ts', scriptsTS);
   watch('./src/partials/*.html', htmlInclude);
   watch('./src/*.html', htmlInclude);
   watch('./src/resources/**', resources);
@@ -170,7 +192,7 @@ const toProd = (done) => {
   done();
 };
 
-exports.default = series(clean, htmlInclude, scripts, styles, resources, images, svgSprites, watchFiles);
+exports.default = series(clean, htmlInclude, scriptsTS, styles, resources, images, svgSprites, watchFiles);
 
 exports.build = series(toProd, clean, htmlInclude, scripts, styles, resources, images, svgSprites, htmlMinify);
 
